@@ -1,0 +1,36 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Define the range for z1, z2, z3 (0 to 1, excluding 0 and 1)
+z = np.linspace(0.001, 0.999, 100)
+
+# Define the functions
+def f1(z2):
+    return (1/50) * (1008 * np.exp(-3 * z2) - 1045) * (4676 * np.exp(-z2) - 4755) * z2
+
+def f2(z3):
+    return (21/50) * (2887 * np.exp(-4 * z3) - 2905) * (106 * np.exp(-2 * z3) - 115) * z3
+
+def f3(z1):
+    return (4/25) * (457 * np.exp(-3 * z1) - 467) * (1187 * np.exp(-z1) - 1245) * z1
+
+# Compute the function values
+f1_values = f1(z)
+f2_values = f2(z)
+f3_values = f3(z)
+
+# Create the plot
+plt.figure(figsize=(8, 6))
+plt.plot(z, f1_values, label='$f_1(z_2)$', color='blue')
+plt.plot(z, f2_values, label='$f_2(z_3)$', color='red')
+plt.plot(z, f3_values, label='$f_3(z_1)$', color='green')
+
+# Add labels and title
+plt.xlabel('z')
+plt.ylabel('f(z)')
+plt.title('Plots of $f_1(z_2), f_2(z_3),$ and $f_3(z_1)$ over $0 < z < 1$')
+plt.grid(True)
+plt.legend()
+
+# Save the plot to a file
+plt.savefig('functions_plot.png')
