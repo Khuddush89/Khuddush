@@ -1,0 +1,28 @@
+# Step 2: Import
+from graphviz import Digraph
+from IPython.display import Image, display
+
+# Step 3: Create vertical colorful flowchart with updated colors
+dot = Digraph(comment='Vertical Energy Flowchart')
+
+# Set global attributes: Top-to-Bottom layout, gradient background, and font
+dot.attr(rankdir='TB', size='10', bgcolor='lightblue:lavender', fontname='Arial', splines='spline')
+
+# Colorful nodes with gradients, shadows, and varied shapes
+dot.node('P', 'Power\nP(t)', shape='ellipse', style='filled,rounded,setlinewidth(2)', fillcolor='skyblue:deepskyblue', fontcolor='white', fontsize='14')
+dot.node('I', 'Incoming Energy\nI(t)', shape='ellipse', style='filled,rounded,setlinewidth(2)', fillcolor='limegreen:forestgreen', fontcolor='white', fontsize='14')
+dot.node('E', 'Stored Energy\nE(t)', shape='ellipse', style='filled,rounded,setlinewidth(2)', fillcolor='gold:goldenrod', fontcolor='black', fontsize='14')
+dot.node('D', 'Demand\nD(t)', shape='box', style='filled,rounded,setlinewidth(2)', fillcolor='crimson:firebrick', fontcolor='white', fontsize='14')  # Updated color
+dot.node('η', 'Storage Loss\nη(t)', shape='hexagon', style='filled,rounded,setlinewidth(2)', fillcolor='teal:cyan', fontcolor='white', fontsize='14')  # Updated color
+dot.node('τ', 'Conversion Loss\nτ(t)', shape='hexagon', style='filled,rounded,setlinewidth(2)', fillcolor='plum:mediumpurple', fontcolor='white', fontsize='14')
+
+# Vertical edges with updated colors for edges involving η and D
+dot.edge('P', 'I', label='Generated Power', color='deepskyblue', fontcolor='deepskyblue', penwidth='2.5', arrowhead='vee', fontname='Arial')
+dot.edge('I', 'E', label='Net Input', color='forestgreen', fontcolor='forestgreen', penwidth='2.5', arrowhead='vee', fontname='Arial')
+dot.edge('D', 'E', label='Energy Demand', color='crimson', fontcolor='crimson', penwidth='2.5', arrowhead='vee', dir='back', fontname='Arial')  # Updated color
+dot.edge('η', 'E', label='Loss: η(t)E(t)', style='dashed', color='teal', fontcolor='teal', penwidth='2', arrowhead='vee', fontname='Arial')  # Updated color
+dot.edge('τ', 'I', label='Loss: τ(t)I(t)', style='dashed', color='mediumpurple', fontcolor='mediumpurple', penwidth='2', arrowhead='vee', fontname='Arial')
+
+# Step 4: Render and show image
+dot.render('vertical_energy_flowchart', format='png', cleanup=True)
+display(Image('vertical_energy_flowchart.png'))
