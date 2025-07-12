@@ -1,0 +1,64 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+# Parameters
+T, tau, A, M = 24, 0.1, 0.01, 365
+n_vals = np.arange(0, 365)  # One year
+tau_n = 0.1 + 0.01 * np.cos(2 * np.pi * n_vals / 365)
+t_starts = 24 * n_vals
+t_ends = 24 * n_vals + tau_n
+t_eval = []
+for n in range(len(n_vals)):
+    t_eval.extend(np.linspace(t_starts[n], t_ends[n], 10))  # 10 points per interval
+t_eval = np.sort(np.unique(t_eval))
+t_start, t_end = t_eval[0], t_eval[-1]
+
+# System of ODEs
+def system(t, y):
+    E, I = y
+    theta = 0.6 + 0.05 * np.sin(2 * np.pi * t / 365)
+    D = 1.4 + 0.1 * np.cos(2 * np.pi * t / 24)
+    eta = 0.025 + 0.005 * np.sin(2 * np.pi * t / 30)
+    G = 1.8 + 0.2 * np.cos(2 * np.pi * t / 365)
+    P = 6 + 1 * np.sin(2 * np.pi * t / 24)
+    beta = 0.8 + 0.05 * np.cos(2 * np.pi * t / 100)
+    dE = theta * I - D - eta * E + G
+    dI = P - beta * I
+    return [dE, dI]
+
+# Initial conditions
+E0, I0 = 100, 10  # Within bounds
+
+# Solve the system
+sol = solve_ivp(system, [t_start, t_end], [E0, I0], t_eval=t_eval, method='RK45', rtol=1e-6, atol=1e-6)
+
+# Apply bounds filtering
+E_vals = np.clip(sol.y[0], 5.8724, 318.665)
+I_vals = np.clip(sol.y[1], 5.8724, 318.665)
+mask = (E_vals >= 5.8724) & (E_vals <= 318.665) & (I_vals >= 5.8724) & (I_vals <= 318.665)
+
+# Create separate plots for E(t) and I(t)
+plt.figure(figsize=(10, 6))
+
+# Plot for E(t) with blue color and thin line
+plt.subplot(2, 1, 1)
+plt.plot(t_eval[mask], E_vals[mask], 'o-', label='E(t)', markersize=3, color='blue', linewidth=0.5)
+plt.xlabel('Time (t)')
+plt.ylabel('E(t)')
+plt.title('E(t) over Time')
+plt.grid(True)
+plt.legend()
+
+# Plot for I(t) with red color and thin line
+plt.subplot(2, 1, 2)
+plt.plot(t_eval[mask], I_vals[mask], 'o-', label='I(t)', markersize=3, color='red', linewidth=0.5)
+plt.xlabel('Time (t)')
+plt.ylabel('I(t)')
+plt.title('I(t) over Time')
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+plt.savefig('plot_thin_lines.png')
+plt.show()
